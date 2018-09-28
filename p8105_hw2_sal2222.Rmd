@@ -9,6 +9,7 @@ output:
 
 ```{r setup, include = FALSE}
 library(tidyverse)
+library(readxl)
 library(p8105.datasets)
 ```
 
@@ -100,6 +101,66 @@ Of the 60 stations that serve the A train, **17** have at least one ADA complian
 
 
 # Problem 2
+
+I will read and clean data from Mr. Trash Wheel in Baltimore Harbor.
+
+```{r import trash wheel data}
+trash_wheel <- read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+               sheet = "Mr. Trash Wheel", range =  cell_cols("A:N"), 
+               col_names = TRUE, trim_ws = TRUE, skip = 1) %>% 
+  janitor::clean_names() %>% 
+  rename(dumpster_number = dumpster) %>% 
+  filter(!is.na(dumpster_number)) %>% 
+  filter(!(month == "Grand Total")) %>% 
+  mutate(sports_balls = round(sports_balls, 0)) %>% 
+  mutate(sports_balls = as.integer(sports_balls))
+
+trash_wheel
+
+```
+
+
+Next, I will read, clean, and combine precipitation data for 2016 and 2017. 
+
+```{r import Baltimore precip data}
+precip_2017 <- read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+               sheet = "2017 Precipitation", range =  "A2:B14", 
+               col_names = TRUE, trim_ws = TRUE) %>% 
+  janitor::clean_names() %>%
+  rename(total_precip = total) %>% 
+  filter(!is.na(total_precip)) %>% 
+  mutate(year = 2017) %>% 
+  select(month, year, total_precip)
+
+precip_2017
+
+precip_2016 <- read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", 
+               sheet = "2016 Precipitation", range =  "A2:B14", 
+               col_names = TRUE, trim_ws = TRUE) %>% 
+  janitor::clean_names() %>%
+  rename(total_precip = total) %>% 
+  filter(!is.na(total_precip)) %>% 
+  mutate(year = 2016) %>% 
+  select(month, year, total_precip)
+
+precip_2016
+
+```
+
+```{r combine precip data}
+precip_full <- bind_rows(precip_2016, precip_2017) %>%
+  janitor::clean_names() %>%
+  mutate(month = month.name[month])
+
+precip_full
+```
+
+
+Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016?
+
+
+
+
 
 
 # Problem 3
