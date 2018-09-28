@@ -17,7 +17,7 @@ library(p8105.datasets)
 
 First, I will read and clean the NYC Transit data.
 
-```{r}
+```{r import subway data, message = FALSE}
 nyc_subway_data <- read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>%
   select(line, station_name, station_latitude, station_longitude, route1:route11, entry, vending, 
@@ -27,15 +27,44 @@ nyc_subway_data <- read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.cs
 nyc_subway_data
   
 ```
-Read and clean the data; retain line, station, name, station latitude / longitude, routes served, entry, vending, entrance type, and ADA compliance. Convert the entry variable from character (YES vs NO) to a logical variable (the ifelse or recode function may be useful).
 
-Write a short paragraph about this dataset – explain briefly what variables the dataset contains, describe your data cleaning steps so far, and give the dimension (rows x columns) of the resulting dataset. Are these data tidy?
+This datase contains information related to each entrance and exit for each subway station in New York City, including the subway line, station name, location grid coordinates, routes served, entrance type, and ADA compliance status. My data cleaning steps so far have been to standardize variable names in "snake_case", select and retain my variables of interest, and to recode the entry variable from a character class with "YES" or "NO" values to a logical class with "TRUE" or "FALSE" values. My resulting dataset has **`r nrow(nyc_subway_data)` rows** and **`r ncol(nyc_subway_data)` columns**. These data are **not tidy** at this stage. The multiple columns for route numbers (routes 1 through 11) represent values themselves rather than a variable name.    
 
-Answer the following questions using these data:
+I will answer specific questions using these data.
 
-How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5); the distinct function may be useful here.
-How many stations are ADA compliant?
-What proportion of station entrances / exits without vending allow entrance?
+*How many distinct stations are there?*
+
+There are **`r nrow(distinct(nyc_subway_data, line, station_name))`** distinct stations, identified by both line and station name.
+
+*How many stations are ADA compliant?*
+
+```{r ADA compliant stations}
+nyc_subway_data %>% 
+  filter(ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+Of the `r nrow(distinct(nyc_subway_data, line, station_name))` distinct stations, **84** have at least one ADA compliant entry. 
+
+*What proportion of station entrances / exits without vending allow entrance?*
+
+```{r entry without vending}
+{
+  nyc_subway_data %>% 
+  filter(vending == "NO") %>%
+  filter(entry == TRUE) %>%  
+  nrow()
+} /
+{
+  nyc_subway_data %>% 
+  filter(vending == "NO") %>%
+  nrow()
+}
+```
+**0.37.7** (37.7%) of station entrances / exits without vending allow entrance. There are 183 entrances / exits without vending, and 69 of these allow entry.
+
+
+
 Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? How many are ADA compliant?
 
 
