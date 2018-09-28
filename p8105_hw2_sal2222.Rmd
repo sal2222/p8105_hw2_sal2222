@@ -127,10 +127,10 @@ precip_2017 <- read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx",
                sheet = "2017 Precipitation", range =  "A2:B14", 
                col_names = TRUE, trim_ws = TRUE) %>% 
   janitor::clean_names() %>%
-  rename(total_precip = total) %>% 
-  filter(!is.na(total_precip)) %>% 
+  rename(total_precip_inches = total) %>% 
+  filter(!is.na(total_precip_inches)) %>% 
   mutate(year = 2017) %>% 
-  select(month, year, total_precip)
+  select(month, year, total_precip_inches)
 
 precip_2017
 
@@ -138,10 +138,10 @@ precip_2016 <- read_excel("data/HealthyHarborWaterWheelTotals2017-9-26.xlsx",
                sheet = "2016 Precipitation", range =  "A2:B14", 
                col_names = TRUE, trim_ws = TRUE) %>% 
   janitor::clean_names() %>%
-  rename(total_precip = total) %>% 
-  filter(!is.na(total_precip)) %>% 
+  rename(total_precip_inches = total) %>% 
+  filter(!is.na(total_precip_inches)) %>% 
   mutate(year = 2016) %>% 
-  select(month, year, total_precip)
+  select(month, year, total_precip_inches)
 
 precip_2016
 
@@ -156,7 +156,21 @@ precip_full
 ```
 
 
-Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in both resulting datasets, and give examples of key variables. For available data, what was the total precipitation in 2017? What was the median number of sports balls in a dumpster in 2016?
+Mr. Trash Wheel cleans up garbage and debris from the Inner Harbor in Baltimore, MD. The dataset describes amounts and types of trash collected by dumpster and date. The dataset includes `r nrow(trash_wheel)` observations, each representing a collected dumpster. The `r ncol(trash_wheel)` variables include weight, volume, and types of trash, along with an estimate of homes powered by electricity from incinerated trash. From May 2014 to August 2017, Mr. Trash Wheel collected `r   sum(trash_wheel$weight_tons)` tons of trash. Cigarette butts are a common item of pollution in the harbor. On average, `r as.integer(mean(trash_wheel$cigarette_butts))` cigarette butts are collected in each dumpster.       
+
+
+The combined precipitation dataset includes measurements from `r nrow(precip_full)` months in 2016 and 2017. The `r ncol(precip_full)` variables are month, year, and total precipation in inches. The total recorded precipitation in these two years was `r sum(precip_full$total_precip_inches)` inches. The average precipitation for each recorded month was `r mean(precip_full$total_precip_inches)` inches.  
+
+
+*For available data, what was the total precipitation in 2017?*
+
+```{r total precip 2017}
+
+
+```
+
+
+*What was the median number of sports balls in a dumpster in 2016?*
 
 
 
