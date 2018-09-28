@@ -30,11 +30,14 @@ nyc_subway_data
 
 This datase contains information related to each entrance and exit for each subway station in New York City, including the subway line, station name, location grid coordinates, routes served, entrance type, and ADA compliance status. My data cleaning steps so far have been to standardize variable names in "snake_case", select and retain my variables of interest, and to recode the entry variable from a character class with "YES" or "NO" values to a logical class with "TRUE" or "FALSE" values. My resulting dataset has **`r nrow(nyc_subway_data)` rows** and **`r ncol(nyc_subway_data)` columns**. These data are **not tidy** at this stage. The multiple columns for route numbers (routes 1 through 11) represent values themselves rather than a variable name.    
 
+
 I will answer specific questions using these data.
+
 
 *How many distinct stations are there?*
 
 There are **`r nrow(distinct(nyc_subway_data, line, station_name))`** distinct stations, identified by both line and station name.
+
 
 *How many stations are ADA compliant?*
 
@@ -44,7 +47,8 @@ nyc_subway_data %>%
   distinct(line, station_name) %>% 
   nrow()
 ```
-Of the `r nrow(distinct(nyc_subway_data, line, station_name))` distinct stations, **84** have at least one ADA compliant entry. 
+Of the `r nrow(distinct(nyc_subway_data, line, station_name))` distinct stations, **84** have at least one ADA compliant entrance or exit. 
+
 
 *What proportion of station entrances / exits without vending allow entrance?*
 
@@ -64,9 +68,34 @@ Of the `r nrow(distinct(nyc_subway_data, line, station_name))` distinct stations
 **0.37.7** (37.7%) of station entrances / exits without vending allow entrance. There are 183 entrances / exits without vending, and 69 of these allow entry.
 
 
+I will now reformat the data so that route number and route name are distinct variables. 
 
-Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? How many are ADA compliant?
+```{r reformat routes}
+nyc_subway_data <- nyc_subway_data %>% 
+  gather(key = route_number, value = route_name, route1:route11) 
 
+nyc_subway_data
+```
+
+*How many distinct stations serve the A train?*
+```{r distinct stations A train}
+nyc_subway_data %>% 
+  filter(route_name == "A") %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+**60** distinct stations serve the A train. 
+
+
+*How many are ADA compliant?*
+```{r ADA compliant A train}
+nyc_subway_data %>% 
+  filter(ada == TRUE) %>%  
+  filter(route_name == "A") %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+Of the 60 stations that serve the A train, **17** have at least one ADA compliant entry or exit.
 
 
 
