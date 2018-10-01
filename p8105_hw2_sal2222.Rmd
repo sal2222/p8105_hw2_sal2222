@@ -165,14 +165,19 @@ The combined precipitation dataset includes measurements from `r nrow(precip_ful
 *For available data, what was the total precipitation in 2017?*
 
 ```{r total precip 2017}
-
-
+precip_full %>% 
+  filter(year == 2017) %>% 
+  summarise(total_precip_2017 = sum(total_precip_inches))
 ```
-
+The total precipitation in 2017 was **29.93 inches**.
 
 *What was the median number of sports balls in a dumpster in 2016?*
-
-
+```{r median balls 2016}
+trash_wheel %>% 
+  filter(year == 2016) %>% 
+  summarise(median_balls = median(sports_balls))
+```
+The median number of sports balls in a dumpster in 2016 was **26**.
 
 
 
